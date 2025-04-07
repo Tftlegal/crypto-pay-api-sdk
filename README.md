@@ -1,5 +1,93 @@
 ![](https://raw.githubusercontent.com/sllavon/crypto-pay-api-sdk/3e83818c975a47f4ca61209b478f2508224058db/media/header.svg)
-# @muxel/crypto-pay-api-sdk
+# crypto-pay-api-sdk
+Описание Telegram Бота, Интегрированного с Crypto Bot
+Telegram бот, интегрированный с Crypto Bot, предназначен для упрощения операций с криптовалютами, таких как создание счетов, прием платежей и перевод средств. Ниже описаны основные модели работы такого бота.
+
+Модели Работы Бота
+Прием Платежей
+
+Описание: Бот позволяет создавать счета для приема платежей в различных криптовалютах, таких как BTC, TON, USDT, и т.д.
+
+Реализация: Используйте метод createInvoice класса Crypto для создания нового счета. Этот метод принимает параметры, такие как валюта (asset), сумма (amount), и необязательные параметры для описания счета (description), скрытого сообщения (hidden_message), и т.д.
+
+Перевод Средств
+
+Описание: Бот может переводить криптовалюту между пользователями Telegram.
+
+Реализация: Используйте метод transfer класса Crypto для отправки криптовалюты пользователю. Этот метод требует идентификатора пользователя Telegram (user_id), валюты (asset), суммы (amount), и уникального идентификатора (spend_id).
+
+Получение Баланса
+
+Описание: Бот может отображать текущий баланс криптовалютных активов.
+
+Реализация: Используйте метод getBalance класса Crypto для получения баланса всех поддерживаемых активов.
+
+Получение Курсы Валют
+
+Описание: Бот может предоставлять актуальные курсы обмена криптовалют.
+
+Реализация: Используйте метод getExchangeRates класса Crypto для получения текущих курсов обмена поддерживаемых валют.
+
+Создание Счетов
+
+Описание: Бот позволяет создавать одноразовые или многоразовые счета для сбора средств.
+
+Реализация: Используйте метод createInvoice для создания счетов. Для многоразовых счетов необходимо реализовать логику обновления статуса счета после каждой оплаты.
+
+Пример Кодовой Реализации python
+```python
+from requests import get, post
+
+class CryptoBot:
+    def __init__(self, token):
+        self.crypto = Crypto(token)
+
+    def start(self):
+        print("Бот запущен. Выберите действие:")
+        print("1. Создать счет")
+        print("2. Перевести средства")
+        print("3. Проверить баланс")
+        action = input("Введите номер действия: ")
+        
+        if action == "1":
+            self.create_invoice()
+        elif action == "2":
+            self.transfer_coins()
+        elif action == "3":
+            self.check_balance()
+
+    def create_invoice(self):
+        asset = input("Введите валюту (например, BTC): ")
+        amount = input("Введите сумму: ")
+        description = input("Введите описание счета (необязательно): ")
+        
+        params = {}
+        if description:
+            params['description'] = description
+        
+        invoice = self.crypto.createInvoice(asset, amount, params)
+        print("Счет создан:", invoice)
+
+    def transfer_coins(self):
+        user_id = int(input("Введите ID пользователя Telegram: "))
+        asset = input("Введите валюту (например, BTC): ")
+        amount = input("Введите сумму: ")
+        spend_id = input("Введите уникальный идентификатор: ")
+        
+        transfer = self.crypto.transfer(user_id, asset, amount, spend_id)
+        print("Перевод выполнен:", transfer)
+
+    def check_balance(self):
+        balance = self.crypto.getBalance()
+        print("Текущий баланс:", balance)
+
+# Запуск бота
+if __name__ == "__main__":
+    token = "Ваш_API_токен"
+    bot = CryptoBot(token)
+    bot.start()
+```
+
 ## [SDK for working with Crypto Bot](https://t.me/CryptoBot)
 
 [![Downloads](https://static.pepy.tech/badge/crypto-pay-api-sdk)](https://pepy.tech/project/crypto-pay-api-sdk) [![TON](https://camo.githubusercontent.com/862a7c69bd3b8a405bdd94557b8e6d5a90702f363058e59fd8dadda3adb60a97/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f2546302539462539322538452d544f4e2d677265656e)](https://ton.org) [![license - MIT](https://camo.githubusercontent.com/63691059c8dda9856bd568ef8bb0b326677b863d8b1fc9237cc096b6fd18a205/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6c6963656e73652f737461732d70726f6b6f706965762f697079776964676574735f746f67676c655f627574746f6e73)](https://github.com/sllavon/crypto-pay-api-sdk/blob/main/LICENSE) 
